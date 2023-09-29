@@ -63,3 +63,25 @@ cat ~/.ssh/id_rsa.pub
 git remote -v - проверка привязки удаленного репозитория
 git remote add origin "ссылка на папку удалённого репозитория"
 git remote remove origin - удалить связия с репозиторием
+## Отправка проекта в удалённый репозиторий
+git push -u origin main 
+## Fork и клонирование репозитория
+git clone "ссылка"
+## Создание ветки проекта в Git
+git branch - покажет текущие ветки
+git checkout -b fix -  создание ветки и перемещение в неё
+git branch new-branch
+git checkout new-branch - переключиься на ветку
+git push -u origin new-branch - отправить в gihub, после можно git push
+## Просмотр истории ветки в терминале Git
+git log имя-ветки --graph --oneline
+## Слияние веток в Git
+Переключитесь обратно на ветку main, выполнив команду 
+git checkout main - Git ответит Switched to branch 'main'
+git merge new-branch -  слить ветки
+## Клонирование репозитория и перенос в github
+git clone "ссылка"
+git branch -a - покажет удаленные ветки. Красным подсвечены удалённые ветки, в начале их имени стоит remotes/ (в командах оно не нужно), означающий, что ветка находится в удалённом репо, а далее - origin/, указывая на то, в каком репозитории они находятся.
+git merge origin/earlyorder слияние удалённой ветки с клонированной.
+git remote add target ссылка-на-пустой-репозиторий
+git push -u target main
