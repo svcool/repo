@@ -23,10 +23,11 @@ git config --global core.safecrlf warn
 ### Если у вас Windows, то выполните последовательно эти команды:
 git config --global core.autocrlf true
 git config --global core.safecrlf warn
-### Дальше общая для всех операционных систем команда, которая позволит
+### Дальше общая для всех операционных систем команда, которая позволит избежать нечитаемых строк в неправильной кодировке:
 git config --global core.quotepath off
 ### Задайте общепринятое название основной ветки в репозитории в Git — main
 git config --global init.defaultBranch main
+git branch -m main - перемоновать ветку в main
 ## Справка в Git
 git help -g
 git help команда
