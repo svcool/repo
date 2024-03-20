@@ -71,7 +71,7 @@ git clone "ссылка"
 git branch - покажет текущие ветки
 git checkout -b fix -  создание ветки и перемещение в неё
 git branch new-branch
-git checkout new-branch - переключиься на ветку
+git checkout new-branch - переключиgit addься на ветку
 git push -u origin new-branch - отправить в gihub, после можно git push
 ## Просмотр истории ветки в терминале Git
 git log имя-ветки --graph --oneline

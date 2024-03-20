@@ -1,0 +1,254 @@
+ sudo chmod -R 0775 /srv/samba/anonymous_shares
+$ sudo chown -R nobody:nogroup /srv/samba/anonymous_shares
+sudo nano /etc/samba/smb.conf
+testparm -a
+$ sudo systemctl restart smbd [Systemd]
+$ sudo service smbd restart [Sys V]
+sudo addgroup sedicomm
+sudo usermod yurii -aG sedicomm
+sudo smbpasswd -a yurii
+sudo smbpasswd -e yurii
+
+Дальше установим такие права, чтобы доступ к папке могли получить только пользователи из группы securegroup.
+
+Создаем группу:
+
+ sudo addgroup securedgroup
+
+Настраиваем права:
+
+ cd /samba/allaccess
+$ sudo chown -R richard:securedgroup secured
+$ sudo chmod -R 0770 secured/
+
+Последний шаг, добавляем настройки в конфигурационный файл samba:
+
+ sudo vi /etc/samba/smb.conf
+
+[secured]
+path = /samba/allaccess/secured
+valid users = @securedgroup
+guest ok = no
+writable = yes
+browsable = yes
+
+ГлавнаяИнструкцииНастройка samba в Ubuntu
+НАСТРОЙКА SAMBA В UBUNTUИнструкции Обновлено:  19 октября, 2020  64  admin 
+ ubuntu
+Samba - это программное обеспечение для организации обмена файлами и работы с общими ресурсами между компьютерами под управлением Linux/Unix и операционной системой Windows. Samba состоит из клиентской и серверной части. Клиентская часть позволяет получить доступ к сетевым папкам и ресурсам Windows, а серверная, в свою очередь, открывает общий доступ к папке Ubuntu для других машин, в том числе и Windows.
+
+
+ 
+В этой небольшой инструкции будет рассмотрена простейшая настройка Samba Ubuntu 18.04, а также как настроить общий доступ к папке Ubuntu с несколькими уровнями привилегий.
+
+Мы создадим три общие папки с различными уровнями разрешений. Папку с анонимным доступом, с доступом для пользователей, входящих в определенную группу и доступом лишь для определенного пользователя.
+
+Получить доступ к расшаренным папкам в Ubuntu смогут как Linux так и Widnows машины, с помощью любой программы для работающей по протоколу SMB.
+
+Содержание статьи:
+
+Подготовка Windows
+Настройка Samba в Ubuntu
+Общий доступ к папке Ubuntu
+Защищенный общий доступ к папке Ubuntu
+Выводы
+ПОДГОТОВКА WINDOWS
+Для того чтобы все работало правильно, все машины должны состоять в одной рабочей группе, указанной на сервере Samba. По умолчанию для Windows, Linux и MacOS рабочая группа называется Workgroup. Чтобы узнать какая рабочая группа используется в вашей Windows откройте командную строку (Win+R, затем cmd) и выполните вот такую команду:
+
+ net config workstation
+
+share1
+
+share
+
+Нужный нам параметр мы видим в строке Домен рабочей станции. Это и есть рабочая группа.
+
+Теперь, если у компьютера с Samba сервером в вашей сети будет постоянный IP адрес желательно ввести его в файле hosts. Для этого запустите командную строку от имени администратора:
+
+share3
+
+И выполните команду:
+
+ notepad C:\Windows\System32\drivers\etc\hosts
+
+В открывшимся файле добавьте строчку с IP адресом компьютера, на который будет установлен Samba:
+
+192.168.0.1 srvr1.domain.com srvr1
+
+Теперь можно переходить к вопросу как расшарить папку Ubuntu.
+
+НАСТРОЙКА SAMBA В UBUNTU
+Начнем, как обычно, с установки. Установка Samba Ubuntu вместе со всеми необходимыми компонентами выполняется командой:
+
+ sudo apt-get install -y samba samba-common python-glade2 system-config-samba
+
+
+
+Когда все будет установлено, можно переходить к настройке. Сначала создайте резервную копию оригинального файла конфигурации Samba:
+
+ sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+После создания резервной копии, создайте свой файл конфигурации, этой командой:
+
+ sudo vi /etc/samba/smb.conf
+
+Сначала укажем глобальные настройки файлового сервера. Для этого вставьте в файл такие строки:
+
+[global]
+workgroup = WORKGROUP
+server string = %h server (Samba, Ubuntu)
+netbios name = Ubuntu Share
+dns proxy = no
+log file = /var/log/samba/log.%m
+max log size = 1000
+passdb backend = tdbsam
+unix password sync = yes
+passwd program = /usr/bin/passwd %u
+pam password change = yes
+map to guest = bad user
+usershare allow guests = yes
+
+
+ 
+Рассмотрим подробнее что значат эти строки.
+
+workgroup - рабочая группа, как уже говорилось должна одинакова на всех машинах
+netbios name - имя компьютера, которое будет отображаться в Windows;
+log file - адрес файла, куда будут складываться сообщения об ошибках и другая информация;
+security - по умолчанию выполнять аутентификацию на уровне пользователя;
+name resolve order - очередность разрешения IP адресов по NetBIOS имени. bcast - означает отправить в локальную сеть широковещательный запрос. Если все компьютеры между которыми планируется взаимодействие находятся в одной сети этот вариант оптимальный;
+passdb backend - способ хранения паролей пользователей;
+unix password sync - синхронизация паролей пользователей samba с локальными паролями Unix;
+map to guest - указывает, когда пользователю будет предоставляться гостевой доступ. Доступно три значения - never - никогда, bad user - когда такого пользователя не существует, bad password - когда пароль введен неверно,
+Когда завершите создание конфигурационного файла, переходим к вопросу как расшарить папку Ubuntu для Windows.
+
+ОБЩИЙ ДОСТУП К ПАПКЕ UBUNTU
+Сначала давайте создадим общую папку доступную всем. То есть с анонимным доступом, без авторизации samba.
+
+Создайте папку, к которой будем открывать доступ, например:
+
+ sudo mkdir -p /samba/allaccess
+
+После того как папка создана, нужно сделать для нее правильные права доступа. Следующие команды разрешают доступ к папке для всех и делают владельцем nobody:
+
+cd /samba
+sudo chmod -R 0755 allaccess
+sudo chown -R nobody:nogroup allaccess/
+
+Следующим шагом будет описать папку allaccess в файле настройки samba:
+
+[allaccess]
+path = /samba/allaccess
+browsable = yes
+writable = yes
+guest ok = yes
+read only = no
+
+Теперь ваш конфигурационный файл должен выглядеть вот так:
+
+[global]
+workgroup = WORKGROUP
+server string = %h server (Samba, Ubuntu)
+netbios name = Ubuntu Share
+dns proxy = no
+log file = /var/log/samba/log.%m
+max log size = 1000
+passdb backend = tdbsam
+unix password sync = yes
+passwd program = /usr/bin/passwd %u
+pam password change = yes
+map to guest = bad user
+usershare allow guests = yes
+#==============
+[AllAccess]
+path = /samba/allaccess
+browsable = yes
+writable = yes
+guest ok = yes
+read only = no
+
+
+
+Рассмотрим подробнее опции, которые были здесь использованы:
+
+path - путь к папке, которую нужно расшарить;
+browsable - будет ли папка отображаться в списке доступных шар;
+writable - будет ли папка доступна для записи;
+read only - папка доступна только для чтения;
+guest ok, public - будет ли разрешен гостевой доступ;
+only guest - если установлено yes, то папка будет доступна только гостям;
+hosts allow - ip адреса, с которых можно получить доступ к этому серверу;
+valid users - по умолчанию могут авторизоваться все пользователи, если в этом параметре передать список пользователей, то авторизоваться смогут только они;
+create mask - маска прав для создаваемых файлов.
+Чтобы применить изменения, перезапустите сервер Samba:
+
+ sudo systemctl restart samba
+
+Настройка Samba Ubuntu для анонимного доступа завершена. Теперь вы можете проверить доступность общей папки allaccess из Windows, для этого нажмите Win+R и выполните:
+
+ \\srvr1\allaccess
+
+share5
+
+Вы увидите нашу папку. Если не увидите, проверьте еще раз конфигурацию. Доступ к папке можно получить без авторизации samba. Настойка Samba шары с доступом без авторизации завершена.
+
+Также вы можете подключится к этому серверу из Linux с помощью Nautilus для этого достаточно набрать адрес smb://ip-сервера, в разделе другие места:
+
+
+
+ЗАЩИЩЕННЫЙ ОБЩИЙ ДОСТУП К ПАПКЕ UBUNTU
+Чтобы расшарить папку для Windows Ubuntu, к которой будут иметь доступ только пользователи из определенной группы, создадим отдельную папку и опишем ее в файле настройки Samba в Ubuntu.
+
+Сначала создаем папку:
+
+ sudo mkdir -p /samba/allaccess/secured
+
+Дальше установим такие права, чтобы доступ к папке могли получить только пользователи из группы securegroup.
+
+Создаем группу:
+
+ sudo addgroup securedgroup
+
+Настраиваем права:
+
+ cd /samba/allaccess
+$ sudo chown -R richard:securedgroup secured
+$ sudo chmod -R 0770 secured/
+
+Последний шаг, добавляем настройки в конфигурационный файл samba:
+
+ sudo vi /etc/samba/smb.conf
+
+[secured]
+path = /samba/allaccess/secured
+valid users = @securedgroup
+guest ok = no
+writable = yes
+browsable = yes
+
+
+
+Перезапустите сервер Samba. Теперь доступ к общей папке в Ubuntu могут получить только пользователи группы securegroup.
+
+Чтобы проверить как это работает добавим пользователя richard в нашу группу:
+
+ sudo usermod -a -G securedgroup richard
+
+Чтобы пользователь мог работать с расшаренными папками в Ubuntu, он должен быть в базе данных Samba. Поэтому создадим для него пароль Samba:
+
+ sudo smbpasswd -a richard
+sudo smbpasswd -e richard
+
+useradd -M -s /sbin/nologin ivanova
+useradd -M -s /sbin/nologin petrov
+Ключ -M заводит пользователя без создания домашнего каталога, а -s /sbin/nologin исключает возможность входа такого пользователя в систему.
+
+# useradd share-user -M -G users -s /sbin/nologin
+
+Создать группу пользователей можно командой:
+
+groupadd privateusers
+
+Добавить ранее созданного пользователя в эту группу:
+
+usermod -a -G privateusers staff1

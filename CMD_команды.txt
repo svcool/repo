@@ -1,0 +1,36 @@
+arp -a | find /i "4C-5E-0C-95-BC-9B"
+for /L %a in (1,1,254) do @start /b ping 172.28.216.%a -n 2 > nul
+Важно, чтобы запуск ping’ов происходил как do @start /b ping, тогда
+
+все ping’и запускаются почти одновременно, и время выполнения цикла составит всего несколько секунд. Если написать просто do ping, т.е. без start, то цикл будет выполняться более 10 минут.
+значок @ перед start предотвращает вывод 254 команд ping
+
+@echo off
+if "%1" == "30-85-A9-3B-CD-72" echo no MAC address & exit /b 1
+for /L %a in (1,1,254) do @start /b ping 172.28.216.%a -n 2 > nul
+ping 127.0.0.1 -n 3 > nul
+arp -a | find /i "%1"
+
+nslookup D.C.B.A.in-addr.arpa
+
+dlink
+show fdb mac_address <MAC-адрес>
+
+show packet ports <№ порта>
+
+старый сервер
+netsh dhcp server dump > c:\dump.dmp
+новый сервер
+net stop dhcpserver
+удалить все файлы и папки внутри C:\Windows\system32\dhcp
+net start dhcpserver
+новый сервер
+предварительно заменить DC1.kres.loc на KRES-B15.kres.loc
+netsh exec c:\dump.dmp
+net stop dhcpserver && net start dhcpserver
+netsh DHCP server initiate reconcile
+
+
+netsh dhcp server export c:\dhcp.txt all
+
+netsh dhcp server import c:\dhcp.txt all
