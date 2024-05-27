@@ -1,37 +1,37 @@
-логи
+п»ї##Р»РѕРіРё
 ===============================
 tail -f /var/log/dhcpd.log
  truncate -s 0 /var/log/dhc
 
 
-менеджер терминлов
+##РјРµРЅРµРґР¶РµСЂ С‚РµСЂРјРёРЅР»РѕРІ
 ======================
 byobu
-F6, shift+f6, отсоединиться но не выйти
-F2 новое окно
-F3, F4 перемещение
-F8 имя окна
-Ctrl+a потом k
+F6, shift+f6, РѕС‚СЃРѕРµРґРёРЅРёС‚СЊСЃСЏ РЅРѕ РЅРµ РІС‹Р№С‚Рё
+F2 РЅРѕРІРѕРµ РѕРєРЅРѕ
+F3, F4 РїРµСЂРµРјРµС‰РµРЅРёРµ
+F8 РёРјСЏ РѕРєРЅР°
+Ctrl+a РїРѕС‚РѕРј k
 
-##NTP сервер времени
+##NTP СЃРµСЂРІРµСЂ РІСЂРµРјРµРЅРё
 ========================
 date
 ntpq -p
 ntpdate 10.151.88.1
 restart ntpd
 
-##Отмена пароля sudo
+##РћС‚РјРµРЅР° РїР°СЂРѕР»СЏ sudo
 ========================
-в файле /etc/sudoers добавить NOPASSWD: в строке:
+РІ С„Р°Р№Р»Рµ /etc/sudoers РґРѕР±Р°РІРёС‚СЊ NOPASSWD: РІ СЃС‚СЂРѕРєРµ:
 %astra-admin    ALL=(ALL:ALL) NOPASSWD: ALL
 
-##Службы
+##РЎР»СѓР¶Р±С‹
 ========================
 ps -eF
-ps axu | gep firefox вывести службы с именем
+ps axu | gep firefox РІС‹РІРµСЃС‚Рё СЃР»СѓР¶Р±С‹ СЃ РёРјРµРЅРµРј
 pidof 15172
 ps -Al | grep ntp
-kill -9 15172 закрыть службу
+kill -9 15172 Р·Р°РєСЂС‹С‚СЊ СЃР»СѓР¶Р±Сѓ
 systemctl start/stop/status Phantom.service
 
 
@@ -39,21 +39,21 @@ systemctl start/stop/status Phantom.service
 ========================
 usermod -aG wireshark administrator
 
-newrp wireshark добавление в текущей сессии или перезайти
+newrp wireshark РґРѕР±Р°РІР»РµРЅРёРµ РІ С‚РµРєСѓС‰РµР№ СЃРµСЃСЃРёРё РёР»Рё РїРµСЂРµР·Р°Р№С‚Рё
 
 
-##Монтирование диска
+##РњРѕРЅС‚РёСЂРѕРІР°РЅРёРµ РґРёСЃРєР°
 ========================
 sudo lsblk -o NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL
-sudo umount /dev/sdb1  либо umount -l /dev/sdb1
+sudo umount /dev/sdb1  Р»РёР±Рѕ umount -l /dev/sdb1
 fdisk -l
 nano /etc/fstab
-blkid uuid разделов
+blkid uuid СЂР°Р·РґРµР»РѕРІ
 
-##Меню запуск от администратор
+##РњРµРЅСЋ Р·Р°РїСѓСЃРє РѕС‚ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ
 ========================
 WIN-R, ALT+F2
-/home/administrator/.fly/ru_RU.UTF-8.miscrc найти строки, где есть "Запустить от имени Администратора", и в команде fly-su -c fly-open -e %f заменить -е на --exec.
+/home/administrator/.fly/ru_RU.UTF-8.miscrc РЅР°Р№С‚Рё СЃС‚СЂРѕРєРё, РіРґРµ РµСЃС‚СЊ "Р—Р°РїСѓСЃС‚РёС‚СЊ РѕС‚ РёРјРµРЅРё РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°", Рё РІ РєРѕРјР°РЅРґРµ fly-su -c fly-open -e %f Р·Р°РјРµРЅРёС‚СЊ -Рµ РЅР° --exec.
 
 
 ##Phantom
@@ -63,11 +63,11 @@ apt search pahntom
 ls -la
 
 
-##Информация о системе:
+##РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРёСЃС‚РµРјРµ:
 ========================
 uname -r 
 lsb_release -a
-##Монтирование репозитория cdrom:
+##РњРѕРЅС‚РёСЂРѕРІР°РЅРёРµ СЂРµРїРѕР·РёС‚РѕСЂРёСЏ cdrom:
 ========================
  mcedit /etc/apt/sources.list
 
@@ -84,10 +84,10 @@ lsb_release -a
 sudo mount /home/Distrib/AstraLinux/1.7.4-24.04.2023_14.23.iso /media/cdrom
 sudo mount -o loop /home/Distrib/AstraLinux/1.7.4-24.04.2023_14.23.iso /media/cdrom
 
-	для подключения репозитория с диска:
+	РґР»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЂРµРїРѕР·РёС‚РѕСЂРёСЏ СЃ РґРёСЃРєР°:
 sudo apt-cdrom add
 sudo apt update
-	Для использования сетевых репозиториев:(Временно сменить протокол интернет-репозиториев в файле /etc/apt/source.list на протокол htt):
+	Р”Р»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ СЃРµС‚РµРІС‹С… СЂРµРїРѕР·РёС‚РѕСЂРёРµРІ:(Р’СЂРµРјРµРЅРЅРѕ СЃРјРµРЅРёС‚СЊ РїСЂРѕС‚РѕРєРѕР» РёРЅС‚РµСЂРЅРµС‚-СЂРµРїРѕР·РёС‚РѕСЂРёРµРІ РІ С„Р°Р№Р»Рµ /etc/apt/source.list РЅР° РїСЂРѕС‚РѕРєРѕР» htt):
 apt policy apt-transport-https ca-certificates
 sudo apt install apt-transport-https ca-certificates
 sudo apt update
@@ -101,20 +101,20 @@ systemctl start xrdp
 ufw allow 3389/tcp
 ufw reload
 
-	Чтобы при повторном подключении попадать в свой прежний сеанс нужно немного изменить настройки XRDP, для этого в файле /etc/xrdp/xrdp.ini меняем fork=true на fork=false
+	Р§С‚РѕР±С‹ РїСЂРё РїРѕРІС‚РѕСЂРЅРѕРј РїРѕРґРєР»СЋС‡РµРЅРёРё РїРѕРїР°РґР°С‚СЊ РІ СЃРІРѕР№ РїСЂРµР¶РЅРёР№ СЃРµР°РЅСЃ РЅСѓР¶РЅРѕ РЅРµРјРЅРѕРіРѕ РёР·РјРµРЅРёС‚СЊ РЅР°СЃС‚СЂРѕР№РєРё XRDP, РґР»СЏ СЌС‚РѕРіРѕ РІ С„Р°Р№Р»Рµ /etc/xrdp/xrdp.ini РјРµРЅСЏРµРј fork=true РЅР° fork=false
 cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.old
 sed -i 's/fork=true/fork=false/' /etc/xrdp/xrdp.ini
 
-Далее в файле /etc/xrdp/xrdp.ini комментируем секцию [Xvnc] , а секцию [Xorg] наоборот, – раскомментируем.
+Р”Р°Р»РµРµ РІ С„Р°Р№Р»Рµ /etc/xrdp/xrdp.ini РєРѕРјРјРµРЅС‚РёСЂСѓРµРј СЃРµРєС†РёСЋ [Xvnc] , Р° СЃРµРєС†РёСЋ [Xorg] РЅР°РѕР±РѕСЂРѕС‚, вЂ“ СЂР°СЃРєРѕРјРјРµРЅС‚РёСЂСѓРµРј.
 cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.old2
 mcedit /etc/xrdp/xrdp.ini
 
 systemctl restart xrdp
 
-	Если будут проблемы с переключением раскладки, откройте файл /etc/xrdp/xrdp_keyboard.ini
+	Р•СЃР»Рё Р±СѓРґСѓС‚ РїСЂРѕР±Р»РµРјС‹ СЃ РїРµСЂРµРєР»СЋС‡РµРЅРёРµРј СЂР°СЃРєР»Р°РґРєРё, РѕС‚РєСЂРѕР№С‚Рµ С„Р°Р№Р» /etc/xrdp/xrdp_keyboard.ini
 cp /etc/xrdp/xrdp_keyboard.ini /etc/xrdp/xrdp_keyboard.ini.old
 mcedit /etc/xrdp/xrdp_keyboard.ini
-И добавьте в конец файла:
+Р РґРѕР±Р°РІСЊС‚Рµ РІ РєРѕРЅРµС† С„Р°Р№Р»Р°:
 [layouts_map_ru]
 rdp_layout_us=ru,us
 rdp_layout_ru=ru,us
@@ -130,18 +130,18 @@ layouts_map=layouts_map_ru
 systemctl restart xrdp
 
 
-	#Дополнительно:
-Настройте доступ к RDP для текущего пользователя, добавив его в группу xrdp:
-sudo adduser <имя_пользователя> xrdp
+	#Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ:
+РќР°СЃС‚СЂРѕР№С‚Рµ РґРѕСЃС‚СѓРї Рє RDP РґР»СЏ С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РґРѕР±Р°РІРёРІ РµРіРѕ РІ РіСЂСѓРїРїСѓ xrdp:
+sudo adduser <РёРјСЏ_РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ> xrdp
 
 ##Proxy apt:
 ========================
-APT может работать  отдельно  с персональными настройками. Такие настройки указываются в файле 
+APT РјРѕР¶РµС‚ СЂР°Р±РѕС‚Р°С‚СЊ  РѕС‚РґРµР»СЊРЅРѕ  СЃ РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹РјРё РЅР°СЃС‚СЂРѕР№РєР°РјРё. РўР°РєРёРµ РЅР°СЃС‚СЂРѕР№РєРё СѓРєР°Р·С‹РІР°СЋС‚СЃСЏ РІ С„Р°Р№Р»Рµ 
 /etc/apt/apt.conf:
-Acquire::http::proxy "http://<имя_пользователя>:<пароль>@<IP-адрес_proxy>:<IP-порт_proxy>/";
-Acquire::https::proxy "http://<имя_пользователя>:<пароль>@<IP-адрес_proxy>:<IP-порт_proxy>/";
-Acquire::ftp::proxy "http://<имя_пользователя>:<пароль>@<IP-адрес_proxy>:<IP-порт_proxy>/";
-Acquire::socks::proxy "http://<имя_пользователя>:<пароль>@<IP-адрес_proxy>:<IP-порт_proxy>/";
+Acquire::http::proxy "http://<РёРјСЏ_РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ>:<РїР°СЂРѕР»СЊ>@<IP-Р°РґСЂРµСЃ_proxy>:<IP-РїРѕСЂС‚_proxy>/";
+Acquire::https::proxy "http://<РёРјСЏ_РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ>:<РїР°СЂРѕР»СЊ>@<IP-Р°РґСЂРµСЃ_proxy>:<IP-РїРѕСЂС‚_proxy>/";
+Acquire::ftp::proxy "http://<РёРјСЏ_РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ>:<РїР°СЂРѕР»СЊ>@<IP-Р°РґСЂРµСЃ_proxy>:<IP-РїРѕСЂС‚_proxy>/";
+Acquire::socks::proxy "http://<РёРјСЏ_РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ>:<РїР°СЂРѕР»СЊ>@<IP-Р°РґСЂРµСЃ_proxy>:<IP-РїРѕСЂС‚_proxy>/";
 Acquire::::Proxy "true";
 10.152.90.4:8080
 
@@ -151,7 +151,7 @@ Acquire::ftp::proxy "http://10.152.90.4:8080/";
 Acquire::socks::proxy "http://10.152.90.4:8080/";
 Acquire::::Proxy "true";
 
-Для задания исключений использовать опцию DIRECT:
+Р”Р»СЏ Р·Р°РґР°РЅРёСЏ РёСЃРєР»СЋС‡РµРЅРёР№ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РѕРїС†РёСЋ DIRECT:
 Acquire::http::Proxy {
     local-apt-repo.local.loc DIRECT;
 };
@@ -160,7 +160,7 @@ Acquire::http::Proxy {
 fly-kcmshell5 proxy
 
 env | grep proxy
-##драйвера
+##РґСЂР°Р№РІРµСЂР°
 ==========
 mcedit /etc/default/grub
 man intel
