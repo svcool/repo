@@ -1,0 +1,49 @@
+//образы докер
+docker images
+//просмотр запущенных контейнеров
+docker ps
+docker ps -a (остановленные)
+// запуск контейнера на основе образа с входом в tty(-i)
+docker run -it  ngnix:latest
+//загрузка образа из репозитория
+docker pull ubuntu
+docker run -it ubuntu:latest
+//выход из контейнера
+exit
+//остановить контейнер (docker ps)
+docker stop
+//зафиксировать контейнер в образ (hash из docker ps -a)
+docker commit <hash> docker_hello:v1
+//удалить контейнер
+docker rm <hash>
+docker rm -f <hash> (принудительно )
+//удалить образ
+docker rmi -f <name>
+//docker файл
+Dockerfile
+--содержание
+From ubuntu:latest	
+		LABEL e.belousov=""
+		RUN apt-get update
+		RUN apt-get install -y g++ mc
+		WORKDIR /root/docker_hello
+		COPY docker_hello.cpp .
+		RUN g++ docker_hello.cpp -o docker_hello
+		CMD ["./docker_hello"]
+//сконструировать контейнер на основе файла
+docker build -f Dockerfile -t docker_hello:v1 .
+//доступ к контейнеру терминалу
+docker run -t -i <name> /bin/bash   (ctrl-d выход)
+docker kill <hash>
+
+exit выход
+docker ps -a
+
+docker start losst_ubuntu запуск контейнера
+docker start -i losst_ubuntu запуск + терминал
+docker attach losst_ubuntu подключиться к терминалу
+
+//при запуске веб сервера
+netstat -tulpn | grep :80 - проверить свободный порт
+sudo systemctl stop nginx - остановка
+docker run -d -p 80:80 hackersploit/bwapp-docker - запуск и проброс 80 порта докера наружу
