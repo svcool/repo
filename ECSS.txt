@@ -1,0 +1,21 @@
+Регистрация на конкретный сервер
+1.Кластеры->sip1->Транспорт-> Добавить IPset(kms) с одним адрессом и другим портом(5062)
+2.Домены->свойства домена->SIP транспорт-> Добавить созданные в п1. IPsetы
+3.На телефонах регистроваться на одни IP c портом 5062, c указанием домена.
+4.Менеджер транков -> IP транк создавать на IPset(kms) на порт приема 5062. На SMG порт назначения сигнализации 5062. Указать домен.
+
+Абонент на ECSS необходимо указывать оба адресса кластера, иначе будет периодическая недоступность выхода через транк.
+
+Репликация БД:
+https://docs.eltex-co.ru/ecss31411/primery-poshagovoj-pervonachal-noj-nastrojki-ecss-10-307699140.html
+sudo mysql -uroot -p -e 'show slave status \G;' | grep -E "Slave_IO_Running:|Slave_SQL_Running:"
+Enter password:
+Slave_IO_Running: Yes
+Slave_SQL_Running: Yes
+
+https://docs.eltex-co.ru/e4/vosstanovlenie-replikatsii-bd-mysql-440962371.html
+
+ecss1-mysql> STOP SLAVE;
+ecss1-mysql> RESET MASTER;
+mysql-ecss2> UNLOCK TABLES;
+mysql-ecss2> START SLAVE;
