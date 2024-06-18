@@ -1,3 +1,4 @@
+#поиск по mac через опрашивание узлов
 arp -a | find /i "4C-5E-0C-95-BC-9B"
 for /L %a in (1,1,254) do @start /b ping 172.28.216.%a -n 2 > nul
 ¬ажно, чтобы запуск pingТов происходил как do @start /b ping, тогда
