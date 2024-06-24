@@ -1,4 +1,4 @@
-Регистрация на конкретный сервер
+#Регистрация на конкретный сервер
 1.Кластеры->sip1->Транспорт-> Добавить IPset(kms) с одним адрессом и другим портом(5062)
 2.Домены->свойства домена->SIP транспорт-> Добавить созданные в п1. IPsetы
 3.На телефонах регистроваться на одни IP c портом 5062, c указанием домена.
@@ -19,3 +19,66 @@ ecss1-mysql> STOP SLAVE;
 ecss1-mysql> RESET MASTER;
 mysql-ecss2> UNLOCK TABLES;
 mysql-ecss2> START SLAVE;
+
+#cocon:
+ssh admin@localhost -p8023
+/domain/krmes/sip/network/info
+/domain/krmes/sip/ip-sets --complete
+
+#Состояние кластера:
+sudo ecss-control status
+all nodes attached
+
+#Службы ecss:
+systemctl list-unit-files 'ecss*'
+
+#Перезапуск нод при сплите:
+https://docs.eltex-co.ru/ecss31412/poterya-svyazi-meyodu-podsistemami-klastera-split-381521607.html
+node/nodes-info
+admin@[mycelium1@ecss1#ECSS 000270]:/$ /node/nodes-info nodes
+----------------T-------------------------------T---------------------¬
+¦     Node      ¦            Erlang             ¦       Mnesia        ¦
++---------------+-------------------------------+---------------------+
+¦core1@ecss1    ¦core1@ecss1,core1@ecss2        ¦not running          ¦
+¦core1@ecss2    ¦core1@ecss1,core1@ecss2        ¦not running          ¦
+¦ds1@ecss1      ¦ds1@ecss1,ds1@ecss2            ¦ds1@ecss1,ds1@ecss2  ¦
+¦ds1@ecss2      ¦ds1@ecss1,ds1@ecss2            ¦ds1@ecss1,ds1@ecss2  ¦
+¦md1@ecss1      ¦md1@ecss1,md1@ecss2            ¦md1@ecss1,md1@ecss2  ¦
+¦md1@ecss2      ¦md1@ecss1,md1@ecss2            ¦md1@ecss1,md1@ecss2  ¦
+¦mycelium1@ecss1¦mycelium1@ecss1,mycelium1@ecss2¦not running          ¦
+¦mycelium1@ecss2¦mycelium1@ecss1,mycelium1@ecss2¦not running          ¦
+¦sip1@ecss1     ¦sip1@ecss1,sip1@ecss2          ¦sip1@ecss1,sip1@ecss2¦
+¦sip1@ecss2     ¦sip1@ecss1,sip1@ecss2          ¦sip1@ecss1,sip1@ecss2¦
+L---------------+-------------------------------+----------------------
+
+sudo systemctl restart ecss-mycelium.service
+Для упрощения этого процесса можно перезапустить все подсистемы одной командой sudo systemctl restart ecss.service.
+
+#Как проверить, запущены ли все ноды?
+cocon
+node/check-services
+
+#backup
+https://docs.eltex-co.ru/ecss31411/nastrojka-avtomatizirovannogo-sozdaniya-i-vygruzki-backup-ov-307700491.html
+
+#log mysql
+/var/lib/ecss/mysql-failed-requests/service_tts_dba/failed_requests
+
+#SSL сертификат
+https://docs.eltex-co.ru/ecss31412/nastrojka-sertifikatov-ecss-10-381519802.html
+В ECSS-10 генерируется и используется единый сертификат. Все подсистемы используют по умолчанию ecss10.crt.
+Также в ходе установки пакета css-user генерируются следующие файлы:
+
+ecss10root.key — корневой приватный ключ под паролем;
+ecss10root.crt — корневой сертификат. Этот сертификат устанавливается на клиентский ПК, чтобы исключить предупреждения безопасности в браузере, если используется само подписанный сертификат, который генерирует ecss-user при установке;
+ecss10.key — приватный ключ для использования системой;
+ecss10.pem — dhparam;
+ecss10.crt — публичный сертификат. Также содержит в себе указание на альтернативные доменные имена (Subject Alternative Name), используемые ECSS.
+
+\\\Secure FTP\ecss_kms\etc\ecss\ssl\
+##генерация ключа:
+sudo dpkg-reconfigure ecss-user - (generate) создание сертификата на ecss1, предварительно удалить ecss10.{pem,crt,key}   и   ecss10root.crt
+##копирование ключа, запускается с сервера на который нужно скопировать:
+sudo gpasswd -a <USER> ssw - добавить пользователя, от имени котрого будет копироваться сертификат, в группу ssw.
+sudo dpkg-reconfigure ecss-user - (copy) копирование сертификата с ecss1(запускается на ecss2), можно просто скопировать  ecss10.{pem,crt,key}   и   ecss10roo.crt
+

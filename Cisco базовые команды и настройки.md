@@ -410,8 +410,13 @@ router#show startup-config
 
 
 **Посмотреть таблицу MAC адресов свитча**
+**Mac address**
 show mac-address-table
+show arp | include 10fe.ed58.0555
 
+**DHCP Relay**
+S1(config)#vlan 80
+S1(config)#ip helper-address 10.1.1.2 - адрес dhcp
 
 **Статически прописать MAC адрес в таблицу адресов свитча**
 #mac-address-table static MAC address vlan {1-4096, ALL} interface interface-id command
