@@ -54,6 +54,15 @@ L---------------+-------------------------------+----------------------
 sudo systemctl restart ecss-mycelium.service
 ƒл€ упрощени€ этого процесса можно перезапустить все подсистемы одной командой sudo systemctl restart ecss.service.
 
+¬ам не нужно перезагружать службы на обоих хостах.
+≈сли вы обнаружили сплит с помощью команд
+system-status 
+node/check-services 
+или по ошибкам в веб интерфейсе
+ѕри этом вы уверены что с транспортом проблем нет, то достаточным будет остановить основные сервисы на ecss2
+sudo systemctl stop ecss-ds ecss-mycelium ecss-core ecss-mediator ecss-pa-sip, подождать пару минут и включить
+sudo systemctl start ecss-ds ecss-mycelium ecss-core ecss-mediator ecss-pa-sip
+
 # ак проверить, запущены ли все ноды?
 cocon
 node/check-services
@@ -81,4 +90,7 @@ sudo dpkg-reconfigure ecss-user - (generate) создание сертификата на ecss1, пред
 ##копирование ключа, запускаетс€ с сервера на который нужно скопировать:
 sudo gpasswd -a <USER> ssw - добавить пользовател€, от имени котрого будет копироватьс€ сертификат, в группу ssw.
 sudo dpkg-reconfigure ecss-user - (copy) копирование сертификата с ecss1(запускаетс€ на ecss2), можно просто скопировать  ecss10.{pem,crt,key}   и   ecss10roo.crt
+
+#freeze-ticktime, она позвол€ет увеличить врем€ задержки развала кластера с 3 до 30 секунд на определенное количество минут. 
+https://docs.eltex-co.ru/pages/viewpage.action?pageId=421494795
 

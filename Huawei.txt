@@ -1,0 +1,318 @@
+System Configuration, telnet
+<Huawei>display version - просмотр версии
+<Huawei>system-view - администраторские права
+[Huawei]sysname R1 - изменить имя устройства
+[R1]interface Gi0/0/0 - переход к интерфейсу
+<R1> reboot - Перезагрузить устройство
+<R1>dir - просмотр файловой системы устройства
+<R2>save - сохранить конфигурацию устройства
+<Huawei> shutdown - выключить
+<Huawei>undo shutdown - включить
+[R1]user-interface console 0 - переход в нужный контекст
+[R1-u1-console]authentication-mode password - задание типа аутентификации
+[R1-u1-console]set authentication password cipher *Password* - задание пароля (здесь дополнительно указан тип хранения - шифрованный/открытый)
+[R1-u1-vty0-4]protocol inbound telnet - удаленный доступ к консоли управления с использованием протокола telnet
+[R1]telnet server enable
+<Huawei> telnet IP - подключение по протоколу telnet
+[R1]display current-configuration - просмотр текущей конфигурации
+[R1]display saved-configuration - просмотр сохранненой конфигурации
+IPv4, subnetting, vlsm, interfaces, pools
+[R1-GigabitEthernet0/0/0]ip address 192.168.0.1 24 - назначение адреса на интерфейс
+[R1]display ip interface brief - просмотр адресов интерфейса
+<Huawei>display ip pool - отображение всех пулов и их настроек
+display interface Gi0/0/0 - отобразить настройки интерфейса
+[Huawei]interface Vlanif 1 - Назначение адреса интерфейсу VLAN 1(создание интерфейса, работающего с vlan, более продвинутый свитч умеет так)
+<Huawei>display mac-address - просмотр САМ-таблицы (для других устройств тоже подходит, но я не помню как по-русски они там называются )
+ping *address* - выполнить проверку прохождения ICMP пакетов до узла
+display arp - выполнить просмотр ARP-кэша на маршрутизаторе
+arp -d - очистка arp таблицы
+[Huawei-GigabitEthernet0/0/0] arp-proxy enable
+[Huawei]ip pool pool1 - пул адресов
+[Huawei-ip-pool-pool1]network 192.168.1.0 mask 24
+[Huawei-ip-pool-pool1]gateway-list 192.168.1.254
+[Huawei-ip-pool-pool1]lease day 1
+[Huawei-ip-pool-pool1]excluded-ip-address 192.168.1.2 192.168.1.99
+[Huawei]ip route-static 192.168.2.0 24 192.168.1.254 - задать маршрут к сети 192.168.2.0/24
+display ip routing-table
+- Выполнить просмотр маршрутных таблиц на маршрутизаторах (IPv4, IPv6)
+[R1]interface LoopBack 0 - создание (открытие) Loopback интерфейса
+[Huawei-GigabitEthernet0/0/0]undo negotiation auto
+[Huawei-GigabitEthernet0/0/0]duplex half - переход в другой режим порта
+[Huawei-GigabitEthernet0/0/0]speed 100 - скорость порта
+tracert IP_address_PC2 - отображение скачков до узла
+<Huawei>display ip pool name pool1 used - просмотр выданных адресов из пула
+DHCP
+[Huawei]dhcp enable - включить DHCP на устройстве
+[Huawei-GigabitEthernet0/0/0]dhcp select global - включение раздачи адресов из ip пула через dhcp на интерфейсе
+[Huawei-GigabitEthernet0/0/0]dhcp select interface - включение раздачи адресов из локального пула адресов
+[Huawei-GigabitEthernet0/0/1]dhcp select relay- включить relay-agent
+[Huawei-GigabitEthernet0/0/1]dhcp relay server-ip 192.168.1.1 - установка маршрута до dhcp сервера
+[Huawei]dhcp snooping enable - включить dhcp snooping
+[Huawei-vlan1]dhcp snooping enable - включить dhcp snooping для vlan
+DHCPv6
+[dhcpv6-pool-pool1] prefix delegation 2002::/48 48
+[dhcpv6-pool-pool1] address prefix 2001::/64 - префикс для раздачи адресов (выдаваемые адреса будут иметь этот префикс)
+[dhcpv6-pool-pool1] excluded-address 2001::1 - исключить адрес из выдаваеммых адресов пула
+[Huawei-GigabitEthernet0/0/1]dhcpv6 server pool1 - dhcp server (при установленном в пуле prefix-delegation будет работать как prefix-delegation server тоже)
+[Huawei-GigabitEthernet0/0/1]dhcpv6 client pd pool2 - клиент для получения префикса для раздачи своим клиентам
+[Huawei-GigabitEthernet0/0/1]ipv6 address pool2 *псевдомаска* - раздача ipv6 адресов из prefix-delegation с помощью SLAAC, псевдомаска = этот роутер может увеличивать размер маски, чтобы различать подсети, отдаваемые на разные адреса
+[Huawei]dhcpv6 pool pool1 - пул ipv6 адресов
+[Huawei-dhcpv6-pool-pool1]address prefix 2001:db8::/64
+[Huawei-dhcpv6-pool-pool1]excluded-address 2001:db8::1
+[Huawei-dhcpv6-pool-pool1]dns-server 2001:db8::1 
+[Huawei-GigabitEthernet0/0/0]dhcpv6 server pool1 - подключение ip пула к интерфейсу
+[Huawei-GigabitEthernet0/0/0]ipv6 address auto global - получение ipv6 через SLAAC
+[Huawei-GigabitEthernet0/0/0]ipv6 address auto dhcp - получение ipv6 через DHCPv6
+[Huawei-GigabitEthernet0/0/1]dhcpv6 relay destination 2001::1 - dhcpv6 relay 
+display dhcpv6 pool
+display dhcpv6 server
+display dhcpv6 duid
+IPV6
+[Huawei]display ipv6 interface - просмотр ipv6 адресов
+display ipv6 routing-table - посмотреть таблицу маршрутизации 
+[Huawei]ipv6 - включить ipv6
+[Huawei-GigabitEthernet0/0/0]ipv6 enable - включить ipv6 на интерфейсе
+ipv6 address auto link-local - автоматическое назначение link-local адреса
+ipv6 address 2001:db8::1/64 - назначение ipv6 адреса
+ping ipv6 *2002::1* - подключение по ipv6
+display ipv6 neighbors - таблица соседей ipv6
+[Huawei-GigabitEthernet0/0/0]undo ipv6 nd ra halt - отмена запрета на рассылку RA
+display ipv6 routing-table
+[Huawei]ipv6 route-static :: 0 2001:db8::1 - статические маршруты ipv6
+[Huawei-GigabitEthernet0/0/0]ipv6 nd autoconfig managed-address-flag - установка managed flag - получение всех настроек от DHCP сервера
+[Huawei-GigabitEthernet0/0/0]ipv6 nd autoconfig other-flag - получение опций от DHCP сервера
+[Huawei]interface tunnel 0/0/0 - создание интерфейса 
+[Huawei-Tunnel0/0/0]tunnel-protocol ipv6-ipv4 - настройка типа туннеля
+[Huawei-Tunnel0/0/0]source _IPv4_АДРЕС_GE0/0/1_AR1_ - настройка точек входа и выхода
+[Huawei-Tunnel0/0/0]destination _IPv4_АДРЕС_GE0/0/1_AR2_
+display interface tunnel 0/0/0 - посмотреть свойства настроенного туннеля
+display ipv6 interface tunnel 0/0/0
+ipv6 route-static 2002:0:0:2222:: 64 2001::2E0:FCFF:FE49:1805 - маршрут до сети ipv6
+VLAN
+[Huawei]vlan 100 - создать vlan
+[Huawei-Ethernet0/0/1]port link-type access - изменить тип подключения порта
+[Huawei-Ethernet0/0/1]port default vlan 100 - команда: которая задает vlan, используемый access портом
+display port vlan - посмотреть к каким vlan относятся порты
+[Huawei-Ethernet0/0/1]port link-type trunk - переключить порт в режим транка
+[Huawei-Ethernet0/0/1]port trunk allow-pass vlan all - ограничить vlan, проходящие через этот линк (all в этом случае разрешает всем)
+[Huawei-Ethernet0/0/2]undo port default vlan
+[Huawei-Ethernet0/0/2]port link-type hybrid - переключить в тип hybrid
+[Huawei-Ethernet0/0/2]port hybrid untagged 100
+[Huawei-Ethernet0/0/2]port hybrid untagged 200
+[Huawei-Ethernet0/0/2]port hybrid pvid vlan 100
+Subinterfaces
+[Huawei]interface Gi0/0/0.100 - создать саб-интерфейс
+[Huawei-GigabitEthernet0/0/0.100]dot1q termination vid 100 - привязка к определенной VLAN
+[Huawei-GigabitEthernet0/0/0.100]arp broadcast enable - включить рассылку arp запросов на саб интерфейсе
+[Huawei]interface vlanif 100 - создание SVI (swtich virtual interface) интерфейса от vlan
+GVRP
+[Huawei]gvrp - включить gvrp
+[Huawei-Ethernet0/0/1]gvrp - включить gvrp (для транковых линков)
+[Huawei-Ethernet0/0/1]gvrp registration fixed - изменить тип регистрации на fixed
+[Huawei-Ethernet0/0/1]gvrp registration forbidden - на forbidden
+Port Security
+[Huawei-Ethernet0/0/1]port-security enable - включение portsecurity для порта доступа
+[Huawei-Ethernet0/0/1]port-security mac-address sticky - привязать mac address к порту
+[Huawei-Ethernet0/0/1]port-security protect-action shutdown - выключение порта при изменении mac-address у порта с флагом sticky mac address
+STP
+[Huawei]stp priority PRIORITY - настройка приоритета STP на устройстве
+[Huawei-Ethernet0/0/N]stp port priority PRIORITY - настройка приоритета на интерфейсе(порте)
+display stp brief - посмотреть роль портов для протокола stp
+Настройка STP:
+[Huawei]stp region-configuration
+[Huawei-mstp-region]region-name R1
+[Huawei-mstp-region]instance 1 vlan 100
+[Huawei-mstp-region]instance 2 vlan 200
+[Huawei-mstp-region]active region-configuraion
+display stp region-configuration
+stp pathcost-standart STANDART
+RIP
+[Huawei]rip 1 - включить процесс RIP маршрутизации (аргумент команды - номер RIP процесса)
+[Huawei-rip-1]version 2 - выбрать версию протокола
+[Huawei-rip-1](undo) summary -  (отключить) включить авто-суммирование маршрутов (сделает таблицу маршрутизации нагляднее, хотя и более объемной)
+[Huawei-rip-1]summary always - безусловное суммирование
+[Huawei-rip-1]network 10.0.0.0 - указание сети для объявления соседям
+[Huawei]display ip routing table | include RIP
+display rip 1 database - Выполнить просмотр информации процесса RIP на AR1
+[Huawei-GigabitEthernet0/0/0]undo rip split-horizon
+[Huawei-GigabitEthernet0/0/0]undo rip input - отключить прием RIP-объявлений через интерфейс Ge0/0/0
+[Huawei-GigabitEthernet0/0/0]undo rip output - отключить отправку RIP-объявлений через интерфейс Ge0/0/0
+- [Huawei-GigabitEthernet0/0/0]rip authentication-mode simple plain Password (Включить простую аутентификацию маршрутизаторов на каждом интерфейсе раздельно)
+- [Huawei-GigabitEthernet0/0/0]rip authentication-mode md5 usual plain Password (Включить защищенную аутентификацию маршрутизаторов на каждом интерфейсе раздельно)
+- [Huawei-rip-1]import-route static cost 2 (Импорт в процесс RIP статических маршрутов)
+- [Huawei-rip-1]import-route ospf 1 cost 2 (Импорт в процесс RIP маршрутов из OSPF)
+- [Huawei]rip N (Запуск процесса RIP маршрутизации)
+	- [Huawei-rip-1]version 2 (Выбор версии протокола)
+	- [Huawei-rip-1]summary (Включить автосуммирование маршрутов)
+	- [Huawei-rip-1]summary always (Включить безусловное автосуммирование маршрутов)
+	- [Huawei-rip-1]undo summary (Выключить автосуммирование маршрутов)
+	- [Huawei-rip-1]network <IP> (Анонсировать сеть)
+	- [Huawei-GigabitEthernet0/0/0]undo rip split-horizon  (Отменить расщепление горизонта на исходящем интерфейсе)
+	- [Huawei-GigabitEthernet0/0/0]undo rip input (Отключить приём RIP-объявлений через интерфейс Ge0/0/0)
+	- [Huawei-GigabitEthernet0/0/0]undo rip output (Отключить отправку RIP-объявлений через интерфейс Ge0/0/0)
+RIPng
+	- [Huawei]ripng N (Запуск процесса RIPng маршрутизации)
+	- [Huawei-GigabitEthernet0/0/0]ripng 1 enable (Включить RIPng на этом интерфейсе)
+	- [Huawei-LoopBack1]ripng 1 enable (Включить RIPng на loopback интерфейсе)
+
+	- [Huawei-ripng-1]import-route direct cost 2 (Импорт в процесс RIPng прямых маршрутов)
+	- [Huawei-ripng-1]import-route static cost 2 (Импорт в процесс RIPng статических маршрутов)
+	- [Huawei-ripng-1]import-route ospfv3 1 cost 2(Импорт в процесс RIPng маршрутов из OSPF)
+VRRP
+[Huawei-GigabitEthernet0/0/0]vrrp vrid 1 virtual-ip 192.168.0.1
+display vrrp brief
+display vrrp
+[Huawei-GigabitEthernet0/0/0]vrrp vrid 1 priority 150 - изменить приоритет на маршрутизаторе
+[Huawei-GigabitEthernet0/0/0]vrrp vrid 1 preempt-mode disable - Выключить Preempt-mode
+[Huawei-GigabitEthernet0/0/1]vrrp6 vrid 1 virtual-ip fe80::1 link-local - настроить обычный VIP
+[Huawei-GigabitEthernet0/0/1]vrrp6 vrid 1 virtual-ip 2003::1
+OSPF
+[Huawei]ospf 1 router-id 1.1.1.1 - включить процесс OSPF маршрутизации (router-id - опционален)
+[Huawei-ospf-1]area 0 - добавить зону OSPF 
+[Huawei-ospf-1-area-0.0.0.0]network 172.16.0.0 0.0.0.255 - добавить сеть в зону (используется обратная маска)
+<Huawei>reset ospf 1 process - перезапуск процесса OSPF
+display ospf brief
+display ospf peer
+display ospf interface
+display ospf routing
+[Huawei-ospf-1-area-0.0.0.2]stub - сделать зону тупиковой
+[Huawei-ospf-1-area-0.0.0.2]stub no-summary - сделать зону полностью тупиковой
+[Huawei-ospf-1-area-0.0.0.2]vlink-peer 3.3.3.3 (на AR2) + 
+[Huawei-ospf-1-area-0.0.0.2]vlink-peer 2.2.2.2 (на AR3) - настройка виртуального линка между router’ами по router-id (ВИРТУАЛЬНЫЕ ЛИНКИ НЕ МОГУТ ПРОХОДИТЬ ЧЕРЕЗ ТУПИКОВЫЕ ЗОНЫ)
+[Huawei-ospf-1-area-0.0.0.3]nssa - объявить зону как not so stubby area 
+[Huawei-ospf-1]import-route direct - аннонсировать сети  в OSPF как внешние типа 1
+[Huawei-ospf-1]import-route static type 2 - добавить в OSPF статический маршрут как внешний типа 2
+МВА сеть - магистральная зона
+[Huawei-GigabitEthernet0/0/0]ospf dr-priority 100 - задать DR приоритет
+[Huawei]router id 200.200.200.200 -  задать Router ID вручную
+[Huawei-ospf-1]peer 20.0.0.2 - настроить соседство (для каждого соседа отдельно, и с каждой стороны своя настройка)
+OSPFv3
+[Huawei]ospfv3 1 - создать OSPFv3 процесс (1 здесь - номер процесса маршрутизации)
+[Huawei-ospfv3-1]router-id 2.2.2.2 - настроить Router-ID
+[Huawei-GigabitEthernet0/0/0]ospfv3 1 area 0 - привязка интерфейса к OSPF (зоне)
+display ospfv3 interface
+display ospfv3 topology
+display ospfv3 peer
+display ospfv3 next-hop
+display ipv6 routing-table protocol ospfv3
+display ipv6 routing-table
+display ospfv3 1 routing - (1 -- номер процесса)
+display ospfv3 lsdb intra-prefix
+display ospfv3 lsdb inter-prefix
+FRAME RELAY
+Настроить NMBA сеть (Frame Relay):
+[Huawei-Serial0/0/0]ip address 20.0.0.1 255.255.255.0
+[Huawei-Serial0/0/0]link-protocol fr
+[Huawei-Serial0/0/0]fr dlci 100
+[Huawei-Serial0/0/0]fr dlci 101
+display fr inarp-info
+display fr map-info
+display fr pvc-info
+Static routes
+	- [R1] ip route-static <net ip> <network mask> <interface ip  address>
+	DEFAULT: ip route-static 0.0.0.0 0 192.168.0.2
+
+	- [R1] ipv6 route-static <net ipv6 with / mask>  <interface ipv6 address>
+	DEFAULT: ipv6 route-static ::/0 3000::2
+Loopback
+	- [R1] interface LoopBack <N> (Перейти в лупбэк N)
+	- [R1-LoopBack0]ip address ... (Назначение ip адреса внутри loopback)
+OSPF
+	- [Huawei]ospf 1 router-id 1.1.1.1 (Включить ospf процесс 1 с id роутера 1.1.1.1)
+	- [Huawei-ospf-1]area 0 (Добавить зону)
+	- [Huawei-ospf-1-area-0.0.0.0]network 172.16.0.0 0.0.0.255 (Добавить сети в зону - используется обратная маска)
+	- [Huawei-ospf-1-area-0.0.0.2]stub (Сделать зону тупиковой)
+	- [Huawei-ospf-1-area-0.0.0.2]stub no-summary (Сделать зону полностью тупиковой)
+
+	Настроить виртуальный линк между AR1 и AR2
+	[Huawei-ospf-1-area-0.0.0.2]vlink-peer <AR2 id> (на AR1)
+	[Huawei-ospf-1-area-0.0.0.2]vlink-peer <AR1 id> (на AR2)
+
+	- [Huawei-ospf-1-area-0.0.0.3]nssa (Объявить зону как NSSA)
+	- [Huawei-ospf-1-area-0.0.0.3]nssa no-summary (Объявить зону как Totally NSSA)
+	- [Huawei-ospf-1]import-route direct type 1 (Импортировать сети в OSPF как внешние типа 1)
+	- [Huawei-ospf-1]import-route static type 2 (Добавить в OSPF статический маршрут как внешний типа 2)
+
+	- если будет получено сообщение о необходимости перезапустить OSPF процесс - выполнить перезапуск.
+	<Huawei>reset ospf 1 process
+
+	- [Huawei-GigabitEthernet0/0/0]ospf dr-priority 100 (Задать dr-приоритет маршрутизатора)
+OSPFv3
+	- [Huawei]ospfv3 1 (Cоздать OSPFv3 процесс)
+	- [Huawei-ospfv3-1]router-id 2.2.2.2 (Настроить Router-ID)
+
+	Указать интерфейсы для работы с OSPFv3:
+	[Huawei-GigabitEthernet0/0/0]ospfv3 1 area 0
+	[Huawei-LoopBack1]ospfv3 1 area 0
+	[Huawei-LoopBack2]ospfv3 1 area 0
+	[Huawei-LoopBack3]ospfv3 1 area 0
+HELP
+ 	- [Huawei]display ip(v6) routing-table (Просмотр таблиц маршрутизации)
+	- [Huawei]display ip routing table | include RIP
+	- display rip(ng) 1 database (Выполнить просмотр информации процесса RIP(ng))
+	- display ospf brief (Выполнить просмотр состояния OSPF)
+	- display ospf peer (Соседи)
+	- display ospf interface (Интерфейс)
+	- display ospf routing (Таблица маршрутизации OSPF)
+	- display ipv6 routing-table protocol ospfv3 (Выполнить просмотр информации процесса OSPF)
+	- display ospfv3 lsdb intra-prefix (Выполнить просмотр lsdb)
+	- display ospfv3 lsdb inter-prefix (Выполнить просмотр lsdb)
+LAG
+[Huawei]interface Eth-Trunk 0 - Создание EtherTrunk(LAG)
+[Huawei-Ethernet0/0/2]Eth-Trunk 0 - добавление порта в LAG
+также, добавление портов к LAG может выполняться в контексте LAG-интерфейса:
+[Huawei-Eth-Trunk0]trunkport Ethernet 0/0/3
+display eth-trunk
+display interface eth-trunk N
+[Huawei-Eth-Trunk0]mode lacp-static - Режим lacp
+[Huawei-Eth-Trunk0]max active-linknumber 3 - Установка максимально кол-ва связанных линков
+
+NAT
+[Huawei-GigabitEthernet0/0/1]nat static enable
+[Huawei-GigabitEthernet0/0/1]nat static global 20.0.0.2 inside IP_адрес_РС1
+- обратить внимание - использован глобальный адрес, не принадлежащий интерфейсу
+[Huawei]nat address-group 0 20.0.0.2 20.0.0.3 - настраивается NAT группа с номером 0, определяющая, какие адреса будут использоваться для исходящих в публичную сеть пакетов (2 адреса)
+[Huawei-GigabitEthernet0/0/1]nat outbound 2000 address-group 0 no-pat - настраивается динамический NAT
+[Huawei]firewall-nat session icmp aging-time 1 - Установить время жизни записей для протокола ICMP в 1 сек
+[Huawei]display firewall-nat session aging-time - Выполнить просмотр времени жизни записей NAT-трансляций
+
+
+
+Настроить на AR1 статический РАТ (Port Address Translation):
+[Huawei-GigabitEthernet0/0/1]nat static enable
+[Huawei-GigabitEthernet0/0/1]nat static protocol tcp global 20.0.0.2 5000 inside 192.168.0.251 telnet
+
+- здесь telnet - протокол, используемый сервером
+- 5000 - внешний порт, к которому нужно будет подключаться к "виртуальному" IP
+- будет использоваться особенность статического NAT/PAT, позволяющая подключаться извне - по той
+причине, что ftp-клиент маршрутизаторов не позволяет задать исходящий порт, только входящий
+
+GRE
+[Huawei]interface Tunnel 0/0/0 - создание туннельного интерфейса:
+[Huawei-Tunnel0/0/0]tunnel-protocol gre - настрока типа туннеля
+[Huawei-Tunnel0/0/0]source GigabitEthernet 0/0/1 - настройка локального конца туннеля
+[Huawei-Tunnel0/0/0]source 20.0.0.1 - возможный вариант задания начала туннеля - указание адреса исходящего интерфейса
+[Huawei-Tunnel0/0/0]destination 20.0.0.6 - настройка точки выхода их туннеля
+[Huawei-Tunnel0/0/0]ip address 192.168.3.1 30 -  назначение адреса локальному концу теннеля
+display ospf 2 interface tunnel0/0/0 - просмотр состояния туннельного интерфейса
+
+IPSec
+Настроить на AR1 заявку:
+[Huawei]ipsec proposal VPN
+[Huawei-ipsec-proposal-VPN]esp authentication-algorithm sha1
+[Huawei-ipsec-proposal-VPN]esp encryption-algorithm 3des
+Выполнить просмотр заявок:
+[Huawei]display ipsec proposal
+Настроить IPSec Policy на AR1 (VPN - имя, 1 - порядковый номер), SA :
+[Huawei]ipsec policy VPN 1 manual
+[Huawei-ipsec-policy-manual-VPN-1]security acl 3000
+[Huawei-ipsec-policy-manual-VPN-1]proposal VPN
+[Huawei-ipsec-policy-manual-VPN-1]tunnel local 20.0.0.1
+[Huawei-ipsec-policy-manual-VPN-1]tunnel remote 20.0.0.6
+[Huawei-ipsec-policy-manual-VPN-1]sa spi outbound esp 12345
+[Huawei-ipsec-policy-manual-VPN-1]sa spi inbound esp 54321
+[Huawei-ipsec-policy-manual-VPN-1]sa string-key outbound esp simple Password
+[Huawei-ipsec-policy-manual-VPN-1]sa string-key inbound esp simple Password
+[Huawei-GigabitEthernet0/0/1]ipsec policy VPN - применение политики к интерфейсу
+
+
