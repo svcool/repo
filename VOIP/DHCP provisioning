@@ -1,0 +1,14 @@
+#DHCP
+cd /etc/dhcp/
+ls -a
+nano dhcpd.conf
+service isc-dhcp-server restart
+systemctl status isc-dhcp-server.service
+
+#log
+nano /var/log/httpd/error_log
+tail -f /var/log/dhcpd.log
+tcpdump -i ens160 -w test.pcap
+
+#console
+byobu -a

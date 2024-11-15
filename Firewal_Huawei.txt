@@ -27,11 +27,14 @@ mask 255.255.255.255
 [USG6000V1-policy-security-rule-ICMP_trust_to_untrust] service icmp
 [USG6000V1-policy-security-rule-ICMP_trust_to_untrust] action permit
 
+<USG6000V1>dis zone //просмотр зон
+
 #отображение сессий
 <USG6000V1>display firewall session table
 
 #создание объетов безопасности
+[USG6000V1]ip address-set host123 type object
 ip address-set host_internal_10.1.3.100 type object    - host_internal_10.1.3.100 имя объекта
-	address 0 10.1.3.100 mask 32		-     адрес объекта
+[USG6000V1-object-address-set-host123]address 0 10.1.3.100 mask 24	-     адрес объекта
 ip service-set TCP/8080 type object 16  - имя протокола 
 service 0 protocol tcp source-port 0 to 65535 destination-port 8080  сервис  Object-Service-Service
