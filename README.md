@@ -95,6 +95,22 @@ git pull
 git log --oneline --all
 git revert "id hash
 
+##Удаление файла и папки из отслеживаемых
+git rm --cached <filename> и для директории рекурсивно: git rm --cached -r <directory>.
+
+##Просмотр истории
+git log --graph --full-history --all --pretty=format:"%h%x09%d%x20%s"
+
+##Удаление из всех комиитов и веток
+git filter-branch --prune-empty --index-filter "git rm -rf --cached --ignore-unmatch file1 dir1" HEAD
+После выполнения команды файл file1 и каталог dir1 будут полностью удалены из истории проекта, опция --prune-empty также удалит образовавшиеся пустые коммиты, которые были связаны с этими файлами/каталогами.
+Проведем очистку от мусора:
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+Отправим новую историю веток и тегов на сервер:
+git push origin --force --all
+git push origin --force --tags
+https://pro-prof.com/forums/topic/git-%D1%83%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%84%D0%B0%D0%B9%D0%BB%D0%BE%D0%B2-%D0%B8%D0%B7-%D0%B2%D1%81%D0%B5%D1%85-%D0%BA%D0%BE%D0%BC%D0%BC%D0%B8%D1%82%D0%BE%D0%B2
+
 ## Gitignore
 - .gitignore - указывается папка для игнорирования индексации
 если файл gitignre проиндексирован используем команды для удаления из индекса:
@@ -110,3 +126,5 @@ git revert "id hash
 - Восклицательный знак(!) в начале строки означает инвертирование правила, необходим для указания исключений из правил игнорирования,
 - Символ "\" используется для экранирования спецсимволов, например, чтобы игнорировать файл с именем "!readme!.txt", нужно написать такое правило: "\!readme!.txt",
 - Для игнорирования всей директории, правило должно оканчиваться на слэш(/), в противном случае правило считается именем файла.
+
+
