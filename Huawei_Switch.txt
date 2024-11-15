@@ -1,0 +1,49 @@
+[Quidway] display current-configuration// просмотр конфига свитча.
+[Quidway] display interfaces// просмотр статуса интерфейса и основых рабочих параметров.
+[Quidway] display vlan all// просмотр информации о vlan.
+[Quidway] display version// просмотр версии микропрограммы свитча.
+[Quidway] display patch// просмотр версии патча ПО.
+[Quidway] super password// задание пароля для смены привелегии пользователя.
+[Quidway] sysname// задание системного имени свитча.
+[Quidway] interface ethernet 0/0/1// переход в меню настройки интерфейса (interface view).
+[Quidway] interface vlanif x// ереход в меню настройки логического L3 интерфейса связанного с vlan.
+[Quidway-Vlan-interfacex]ip address 10.65.1.1 255.255.0.0// задание IP адреса логическому L3 интерфейсу VLANif.
+[Quidway] ip route-static 0.0.0.0 0.0.0.0 10.65.1.2// настройка статического маршрута, в примере - маршрут по умолчанию.
+[Quidway] user-interface vty 0 4// настройка virtual terminal интерфейса.
+[Quidway-ui-vty0-4]authentication-mode password// переключение типа аутентификации на парольную.
+[Quidway-ui-vty0-4]set authentication-mode password simple 222// задание пароля.
+[Quidway-ui-vty0-4]user privilege level 3// указание уровня привилегий пользователя.
+[Quidway] interface ethernet 0/0/1// зайти в настройку интерфейса.
+[Quidway] int e0/0/1// зайти в настройку интерфейса.
+[Quidway-Ethernet0/1]duplex {half|full|auto}// настройка режима работы порта.
+[Quidway-Ethernet0/1]speed {10|100|auto}// настройка скорости работы порта.
+[Quidway-Ethernet0/1]flow-control// настройка Flow Control.
+[Quidway-Ethernet0/1]port link-type {trunk|access|hybrid}// настройка режима работы с vlan данного порта.
+[Quidway-Ethernet0/1]port default vlan 3// настройка порта в режиме обработки VLAN - access, default vid 3.
+[Quidway-Ethernet0/2]port trunk allow-pass vlan {ID|All}// задание перечня разрешенных vlan на trunk порту.
+[Quidway-Ethernet0/3]port trunk pvid vlan 3// задание PVID на Trunk порту.
+[Quidway-Ethernet0/1]shutdown// физическое выключение порта.
+[Quidway-Ethernet0/1]undo shutdown// физическое включение порта.
+[Quidway-Ethernet0/1]quit// возврат в предыдушее меню.
+
+#VLAN acsess
+<ssw1-h5731.ukt>system-view
+[ssw1-h5731.ukt]interface GigabitEthernet 0/0/3
+[ssw1-h5731.ukt-GigabitEthernet0/0/3]port link-type trunk
+[ssw1-h5731.ukt-GigabitEthernet0/0/3]port default vlan 10
+[ssw1-h5731.ukt-GigabitEthernet0/0/3]quit
+display port vlan
+#VLAN trunk
+<ssw1-h5731.ukt>system-view
+[ssw1-h5731.ukt]interface GigabitEthernet 0/0/3
+[ssw1-h5731.ukt-GigabitEthernet0/0/3]port link-type trunk
+[ssw1-h5731.ukt-GigabitEthernet0/0/3]port trunk allow-pass vlan 10
+[ssw1-h5731.ukt-GigabitEthernet0/0/3]quit
+display port vlan
+#настройка IPтелефона с ПК
+interface GigabitEthernet0/0/17
+ description Printer M2035dn_Konovalov
+ port link-type hybrid
+ port hybrid pvid vlan 60
+ port hybrid tagged vlan 80
+ port hybrid untagged vlan 60

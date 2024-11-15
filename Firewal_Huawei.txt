@@ -1,0 +1,40 @@
+#Virtual System (VS) изоляция управления от других сетей
+ip binding vpn-instance default – данная команда определяет виртуальную систему
+undo ip binding vpn-instance default - отмена VS интерфейс может использоваться для передачи трафика
+
+#Привелигированый режим System-view
+
+#Просмотр display
+
+#Зоны безопасности
+trust<---untrast
+
+добавить в зону untrust
+[USG6000V1]firewall zone untrust
+[USG6000V1-zone-untrust]add interface gi1/0/0
+[USG6000V1]firewall zone trust
+[USG6000V1-zone-untrust]add interface gi0/0/0
+
+Конфигурирование зон
+[USG6000V1]security-policy
+[USG6000V1-policy-security]rule name ICMP_trust_to_untrust
+[USG6000V1-policy-security-rule-ICMP_trust_to_untrust] source-zone trust
+[USG6000V1-policy-security-rule-ICMP_trust_to_untrust] destination-zone untrust
+[USG6000V1-policy-security-rule-ICMP_trust_to_untrust] source-address 10.1.2.100
+mask 255.255.255.255
+[USG6000V1-policy-security-rule-ICMP_trust_to_untrust] destination-address
+10.1.3.10 mask 255.255.255.255
+[USG6000V1-policy-security-rule-ICMP_trust_to_untrust] service icmp
+[USG6000V1-policy-security-rule-ICMP_trust_to_untrust] action permit
+
+<USG6000V1>dis zone //просмотр зон
+
+#отображение сессий
+<USG6000V1>display firewall session table
+
+#создание объетов безопасности
+[USG6000V1]ip address-set host123 type object
+ip address-set host_internal_10.1.3.100 type object    - host_internal_10.1.3.100 имя объекта
+[USG6000V1-object-address-set-host123]address 0 10.1.3.100 mask 24	-     адрес объекта
+ip service-set TCP/8080 type object 16  - имя протокола 
+service 0 protocol tcp source-port 0 to 65535 destination-port 8080  сервис  Object-Service-Service
